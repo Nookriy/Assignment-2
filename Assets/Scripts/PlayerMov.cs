@@ -10,7 +10,8 @@ public class PlayerMov : MonoBehaviour
     public float force;
     private NavMeshAgent agent;
     private Camera camera;
-    
+    public bool isBattlemode;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +26,11 @@ public class PlayerMov : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isBattlemode)
+        {
+            agent.Stop();
+            return;
+        }
         MouseMovement();
     }
 
@@ -50,7 +56,7 @@ public class PlayerMov : MonoBehaviour
 
     void MouseMovement()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButton("Fire1"))
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
