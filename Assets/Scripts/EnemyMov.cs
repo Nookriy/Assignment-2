@@ -21,10 +21,8 @@ public class EnemyMov : MonoBehaviour
     [SerializeField]
     private float AttackRange;
     public bool isBattlemode;
-    [SerializeField]
-    private float Damage;
-    [SerializeField]
-    private float HP;
+    public float Damage;
+    public float HP;
 
     // Start is called before the first frame update
     void Start()
