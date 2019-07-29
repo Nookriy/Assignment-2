@@ -11,6 +11,10 @@ public class PlayerMov : MonoBehaviour
     private NavMeshAgent agent;
     private Camera camera;
     public bool isBattlemode;
+    public int PlayerHP;
+    public int PlayerDamage;
+    public bool PlayerisDefending;
+
 
     // Start is called before the first frame update
     void Start()
@@ -33,26 +37,25 @@ public class PlayerMov : MonoBehaviour
         }
         MouseMovement();
     }
-
-    void Movement()
-    {
-        if (Input.GetKey(KeyCode.W))
-        {
-            rb.AddForce(transform.forward * force);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            rb.AddForce(transform.forward * -force);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            rb.AddForce(transform.right * force);
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            rb.AddForce(transform.right * -force);
-        }
-    }
+    //void Movement()
+    //{
+    //    if (Input.GetKey(KeyCode.W))
+    //    {
+    //        rb.AddForce(transform.forward * force);
+    //    }
+    //    if (Input.GetKey(KeyCode.S))
+    //    {
+    //        rb.AddForce(transform.forward * -force);
+    //    }
+    //    if (Input.GetKey(KeyCode.D))
+    //    {
+    //        rb.AddForce(transform.right * force);
+    //    }
+    //    if (Input.GetKey(KeyCode.A))
+    //    {
+    //        rb.AddForce(transform.right * -force);
+    //    }
+    //}
 
     void MouseMovement()
     {

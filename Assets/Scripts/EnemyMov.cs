@@ -1,14 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
+
 
 public enum states { idle, patrol, chase, attack}
 public class EnemyMov : MonoBehaviour
 {
     public Transform[] Waypoints;
     public Transform desiredWaypoint;
-    private NavMeshAgent ai;
     public states state;
     private bool idleWaypoint;
     [SerializeField]
@@ -21,16 +20,20 @@ public class EnemyMov : MonoBehaviour
     [SerializeField]
     private float AttackRange;
     public bool isBattlemode;
-    public float Damage;
-    public float HP;
-
+    public int Damage;
+    public int HP;
+    [SerializeField]
+    private float speed;
+    [SerializeField]
+    private float radiusWaypointDetect;
+    private BattleManager bm;
     // Start is called before the first frame update
     void Start()
     {
-        ai = gameObject.GetComponent<NavMeshAgent>();
         state = states.patrol;
         player = GameObject.FindGameObjectWithTag("Player");
-        
+        bm = GameObject.FindObjectOfType<BattleManager>();
+                
     }
 
     // Update is called once per frame
@@ -38,10 +41,13 @@ public class EnemyMov : MonoBehaviour
     {
         if (isBattlemode)
         {
-            ai.Stop();
+            //ai.Stop();
             return;
         }
         SwitchStatement();
+
+        
+
     }
 
     public void AImovement()
@@ -50,15 +56,19 @@ public class EnemyMov : MonoBehaviour
         {
             desiredWaypoint = Waypoints[Random.Range(0, Waypoints.Length - 1)];
         }
-        if (desiredWaypoint.position.x == transform.position.x && desiredWaypoint.position.z == transform.position.z)
+        // If distance between desiredwaypoint and enem is smaller or equal to X units, then 
+        if (Vector3.Distance(desiredWaypoint.position, transform.position) <= radiusWaypointDetect) 
+
         {
             idleWaypoint = true;
             desiredWaypoint = null;
         }
         if(desiredWaypoint != null)
         {
-            ai.SetDestination(desiredWaypoint.position);
+           transform.position = Vector3.MoveTowards(transform.position, desiredWaypoint.position, speed * Time.deltaTime);
         }
+
+
 
     }
 
@@ -68,6 +78,7 @@ public class EnemyMov : MonoBehaviour
         switch (state)
         {
             case states.idle:
+                Debug.Log("Idling");
                 timer -= Time.deltaTime;
                 if (timer <= 0)
                 {
@@ -78,6 +89,7 @@ public class EnemyMov : MonoBehaviour
                 
                 break;
             case states.patrol:
+                Debug.Log("Patrolling");
                 AImovement();
                 if (idleWaypoint)
                 {
@@ -89,6 +101,7 @@ public class EnemyMov : MonoBehaviour
                 }
                 break;
             case states.chase:
+                Debug.Log("Chasing");
                 ChaseFunct();
                 if (Vector3.Distance(transform.position, player.transform.position) >= ChaseRange)
                 {
@@ -103,6 +116,7 @@ public class EnemyMov : MonoBehaviour
                 break;
             case states.attack:
                 //change to battlemode
+                bm.initializeBattlemode(gameObject.GetComponent<EnemyMov>());
                 break;
             default:
                 state = states.patrol;
@@ -114,6 +128,17 @@ public class EnemyMov : MonoBehaviour
 
     void ChaseFunct()
     {
-        ai.SetDestination(player.transform.position);
+        // ai.SetDestination(player.transform.position);
+        transform.position = Vector3.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
+    }
+    
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        foreach (Transform wayppoint in Waypoints)
+        {
+            Gizmos.DrawSphere(wayppoint.position, radiusWaypointDetect);
+        }
     }
 }
+
